@@ -42,7 +42,7 @@ public class RedmineSettingsManager {
 		Map<String, User> result = new HashMap<String, User>();
 		try {
 			for (User user: manager.getUsers()) {
-				result.put(user.getLogin(), user);
+				result.put(user.getLogin(), manager.getUserById(user.getId()));
 			}
 		} catch (RedmineException e) {}
 		return result;
