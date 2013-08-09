@@ -20,16 +20,18 @@
 
 package com.bouygtel.sonar.redmine;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.sonar.api.config.Settings;
 import org.sonar.api.security.Authenticator;
+import org.sonar.api.security.ExternalGroupsProvider;
 import org.sonar.api.security.ExternalUsersProvider;
 import org.sonar.api.security.SecurityRealm;
 import org.sonar.api.security.UserDetails;
 
-import com.taskadapter.redmineapi.RedmineException;
-import com.taskadapter.redmineapi.RedmineManager;
+import com.taskadapter.redmineapi.bean.Group;
 import com.taskadapter.redmineapi.bean.User;
 
 public class RedmineRealm extends SecurityRealm {
@@ -65,6 +67,21 @@ public class RedmineRealm extends SecurityRealm {
 				details.setName(user.getFullName());
 				details.setEmail(user.getMail());
 				return details;
+			}
+		};
+	}
+
+	@Override
+	public ExternalGroupsProvider getGroupsProvider() {
+		return new ExternalGroupsProvider() {
+			@Override
+			public Collection<String> doGetGroups(String username) {
+				User user = users.get(username);
+				Collection<String> result = new HashSet<String>();
+				for (Group group: user.getGroups()) {
+					result.add(group.getName());
+				}
+				return result;
 			}
 		};
 	}
