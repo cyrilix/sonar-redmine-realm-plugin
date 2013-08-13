@@ -29,15 +29,30 @@ import com.taskadapter.redmineapi.RedmineException;
 import com.taskadapter.redmineapi.RedmineManager;
 import com.taskadapter.redmineapi.bean.User;
 
+/**
+ * The RedmineSettingsManager will parse the settings.
+ * This class is also responsible for authentication.
+ */
 public class RedmineSettingsManager {
 	private final String url;
 	private final RedmineManager manager;
 
+	/**
+	 * Create an instance of the settings manager.
+	 *
+	 * @param settings The settings to use.
+	 */
 	public RedmineSettingsManager(Settings settings) {
 		url = settings.getString("redmine.url");
 		manager =  new RedmineManager(url, settings.getString("redmine.key"));
 	}
 
+	/**
+	 * Get all the @link{User}s available in the target.
+	 *
+	 * @return A @link{Map} with all the @link{User} objects.
+	 *         The key is the login of the user.
+	 */
 	public Map<String, User> getUsers() {
 		Map<String, User> result = new HashMap<String, User>();
 		try {
@@ -48,6 +63,12 @@ public class RedmineSettingsManager {
 		return result;
 	}
 
+	/**
+	 * Authenticates a user.
+	 *
+	 * @return <code>true</code> if the user is recognized;
+	 *         <code>false</code> otherwise.
+	 */
 	public boolean auth(String username, String password) {
 		try {
 			new RedmineManager(url, username, password).getCurrentUser();

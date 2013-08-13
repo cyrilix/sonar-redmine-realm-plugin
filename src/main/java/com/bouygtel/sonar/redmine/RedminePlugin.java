@@ -25,6 +25,9 @@ import java.util.List;
 import org.sonar.api.SonarPlugin;
 import com.google.common.collect.ImmutableList;
 
+/**
+ * @author Raphael Jolly
+ */
 public class RedminePlugin  extends SonarPlugin {
 
 	public List getExtensions() {

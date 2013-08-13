@@ -34,6 +34,9 @@ import org.sonar.api.security.UserDetails;
 import com.taskadapter.redmineapi.bean.Group;
 import com.taskadapter.redmineapi.bean.User;
 
+/**
+ * @author Raphael Jolly
+ */
 public class RedmineRealm extends SecurityRealm {
 	private final RedmineSettingsManager settingsManager;
 	private Map<String, User> users;
@@ -42,6 +45,10 @@ public class RedmineRealm extends SecurityRealm {
 		settingsManager = new RedmineSettingsManager(settings);
 	}
 
+	/**
+	 * Initializes Redmine realm and populates the users.
+	 *
+	 */
 	@Override
 	public void init() {
 		users = settingsManager.getUsers();
