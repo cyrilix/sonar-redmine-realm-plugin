@@ -20,77 +20,49 @@
 
 package com.bouygtel.sonar.redmine;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-
 import org.sonar.api.config.Settings;
 import org.sonar.api.security.Authenticator;
 import org.sonar.api.security.ExternalGroupsProvider;
 import org.sonar.api.security.ExternalUsersProvider;
 import org.sonar.api.security.SecurityRealm;
-import org.sonar.api.security.UserDetails;
-
-import com.taskadapter.redmineapi.bean.Group;
-import com.taskadapter.redmineapi.bean.User;
 
 /**
  * @author Raphael Jolly
  */
 public class RedmineRealm extends SecurityRealm {
 	private final RedmineSettingsManager settingsManager;
-	private Map<String, User> users;
+	private RedmineAuthenticator authenticator;
+	private ExternalUsersProvider usersProvider;
+	private ExternalGroupsProvider groupsProvider;
 
 	public RedmineRealm(Settings settings) {
 		settingsManager = new RedmineSettingsManager(settings);
 	}
 
 	/**
-	 * Initializes Redmine realm and populates the users.
+	 * Initializes Redmine authenticator and users and groups providers.
 	 *
 	 */
 	@Override
 	public void init() {
-		users = settingsManager.getUsers();
+		authenticator = new RedmineAuthenticator(settingsManager); 
+		usersProvider = new RedmineUsersProvider(settingsManager.getUsers());
+		groupsProvider = new RedmineGroupsProvider(settingsManager.getUsers());
 	}
 
 	@Override
 	public Authenticator doGetAuthenticator() {
-		return new Authenticator() {
-			@Override
-			public boolean doAuthenticate(Context context) {
-				return settingsManager.auth(context.getUsername(), context.getPassword());
-			}
-		};
+		return authenticator;
 	}
 
 	@Override
 	public ExternalUsersProvider getUsersProvider() {
-		return new ExternalUsersProvider() {
-			@Override
-			public UserDetails doGetUserDetails(Context context) {
-				User user = users.get(context.getUsername());
-				UserDetails details = new UserDetails();
-				details.setName(user.getFullName());
-				details.setEmail(user.getMail());
-				return details;
-			}
-		};
+		return usersProvider;
 	}
 
 	@Override
 	public ExternalGroupsProvider getGroupsProvider() {
-		return new ExternalGroupsProvider() {
-			@Override
-			public Collection<String> doGetGroups(String username) {
-				User user = users.get(username);
-				Collection<String> result = new HashSet<String>();
-				for (Group group: user.getGroups()) {
-					result.add(group.getName());
-				}
-				return result;
-			}
-		};
+		return groupsProvider;
 	}
 
 	@Override
