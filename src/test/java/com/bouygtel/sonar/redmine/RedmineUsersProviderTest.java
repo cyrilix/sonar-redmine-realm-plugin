@@ -49,4 +49,15 @@ public class RedmineUsersProviderTest {
 		assertTrue("To To".equals(details.getName()));
 		assertTrue("to@to".equals(details.getEmail()));
 	}
+
+	@Test
+	public void testNoUser() {
+		Map<String, User> users = new HashMap<String, User>();
+		ExternalUsersProvider provider = new RedmineUsersProvider(users);
+		Context context = new Context("toto", null);
+		try {
+			provider.doGetUserDetails(context);
+			fail();
+		} catch (NullPointerException e) {}
+	}
 }

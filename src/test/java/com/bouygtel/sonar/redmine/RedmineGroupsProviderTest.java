@@ -57,4 +57,26 @@ public class RedmineGroupsProviderTest {
 		assertTrue(result.contains("titi"));
 		assertTrue(result.contains("tata"));
 	}
+
+	@Test
+	public void testNoGroup() {
+		Map<String, User> users = new HashMap<String, User>();
+		List<Group> groups = new ArrayList<Group>();
+		User user = new User();
+		user.setGroups(groups);
+		users.put("toto", user);
+		ExternalGroupsProvider provider = new RedmineGroupsProvider(users);
+		Collection<String> result = provider.doGetGroups("toto");
+		assertTrue(result.size() == 0);
+	}
+
+	@Test
+	public void testNoUser() {
+		Map<String, User> users = new HashMap<String, User>();
+		ExternalGroupsProvider provider = new RedmineGroupsProvider(users);
+		try {
+			provider.doGetGroups("toto");
+			fail();
+		} catch (NullPointerException e) {}
+	}
 }
