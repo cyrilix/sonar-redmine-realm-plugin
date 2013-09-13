@@ -20,11 +20,15 @@
 
 package com.bouygtel.sonar.redmine;
 
+import java.util.Map;
+
 import org.sonar.api.config.Settings;
 import org.sonar.api.security.Authenticator;
 import org.sonar.api.security.ExternalGroupsProvider;
 import org.sonar.api.security.ExternalUsersProvider;
 import org.sonar.api.security.SecurityRealm;
+
+import com.taskadapter.redmineapi.bean.User;
 
 /**
  * @author Raphael Jolly
@@ -45,9 +49,10 @@ public class RedmineRealm extends SecurityRealm {
 	 */
 	@Override
 	public void init() {
+		final Map<String, User> users = settingsManager.getUsers();
 		authenticator = new RedmineAuthenticator(settingsManager); 
-		usersProvider = new RedmineUsersProvider(settingsManager.getUsers());
-		groupsProvider = new RedmineGroupsProvider(settingsManager.getUsers());
+		usersProvider = new RedmineUsersProvider(users);
+		groupsProvider = new RedmineGroupsProvider(users);
 	}
 
 	@Override
