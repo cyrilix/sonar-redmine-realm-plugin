@@ -1,0 +1,67 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.codehaus.sonar-plugins</groupId>
+    <artifactId>parent</artifactId>
+    <version>16</version>
+  </parent>
+  <groupId>com.bouygtel</groupId>
+  <artifactId>sonar-redmine-plugin</artifactId>
+  <version>0.0.3-SNAPSHOT</version>
+  <packaging>sonar-plugin</packaging>
+  <name>Sonar Redmine Plugin</name>
+  <description>Delegates authentication to Redmine</description>
+  <inceptionYear>2013</inceptionYear>
+  <organization>
+    <name>Bouygues Telecom</name>
+    <url>http://www.bouyguestelecom.fr</url>
+  </organization>
+  <developers>
+    <developer>
+      <id>rjolly</id>
+      <name>Raphael Jolly</name>
+    </developer>
+  </developers>
+  <properties>
+    <sonar.version>3.1</sonar.version>
+    <sonar.pluginName>Redmine</sonar.pluginName>
+    <sonar.pluginClass>com.bouygtel.sonar.redmine.RedminePlugin</sonar.pluginClass>
+  </properties>
+  <repositories>
+    <repository>
+      <id>internal</id>
+      <name>Depot interne</name>
+      <url>http://maven-bss.dev.dolmen.bouyguestelecom.fr:8081/nexus/content/repositories/livrable-bss</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>snapshots</id>
+      <name>Depot interne (snapshot)</name>
+      <url>http://maven-bss.dev.dolmen.bouyguestelecom.fr:8081/nexus/content/repositories/snaphot-bss</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  <dependencies>
+    <dependency>
+      <groupId>org.codehaus.sonar</groupId>
+      <artifactId>sonar-plugin-api</artifactId>
+      <version>${sonar.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.taskadapter</groupId>
+      <artifactId>redmine-java-api</artifactId>
+      <version>1.22-bouygtel-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+</project>
