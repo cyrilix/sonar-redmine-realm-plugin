@@ -17,12 +17,10 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-
 package com.bouygtel.sonar.redmine;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 
 import org.sonar.api.security.ExternalGroupsProvider;
 
@@ -33,19 +31,39 @@ import com.taskadapter.redmineapi.bean.User;
  * @author Raphael Jolly
  */
 public class RedmineGroupsProvider extends ExternalGroupsProvider {
-	private final Map<String, User> users;
 
-	public RedmineGroupsProvider(Map<String, User> users) {
-		this.users = users;
-	}
+    private UsersManager usersManager;
 
-	@Override
-	public Collection<String> doGetGroups(String username) {
-		User user = users.get(username);
-		Collection<String> result = new HashSet<String>();
-		for (Group group: user.getGroups()) {
-			result.add(group.getName());
-		}
-		return result;
-	}
+    /**
+     * Constructeur
+     * 
+     * @param usersManager
+     */
+    public RedmineGroupsProvider(UsersManager usersManager) {
+        this.usersManager = usersManager;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see org.sonar.api.security.ExternalGroupsProvider#doGetGroups(java.lang.String)
+     */
+    @Override
+    public Collection<String> doGetGroups(String username) {
+
+        if (username == null) {
+            return null;
+        }
+
+        User user = usersManager.getUser(username);
+        if (user == null) {
+            return null;
+        }
+
+        Collection<String> result = new HashSet<String>();
+        for (Group group : user.getGroups()) {
+            result.add(group.getName());
+        }
+        return result;
+    }
 }

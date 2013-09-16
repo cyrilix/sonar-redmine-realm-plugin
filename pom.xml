@@ -67,13 +67,32 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.9</version>
+      <version>4.8.2</version>
       <scope>test</scope>
     </dependency>
+    
     <dependency>
       <groupId>com.taskadapter</groupId>
       <artifactId>redmine-java-api</artifactId>
-      <version>1.22-bouygtel-SNAPSHOT</version>
+      <version>1.22-bouygtel</version>
+      <exclusions>
+      	<exclusion>
+      		<artifactId>commons-logging</artifactId>
+      		<groupId>commons-logging</groupId>
+      	</exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+    	<groupId>org.easymock</groupId>
+    	<artifactId>easymock</artifactId>
+    	<version>3.0</version>
+    	<scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>ch.qos.logback</groupId>
+    	<artifactId>logback-classic</artifactId>
+    	<version>0.9.27</version>
+    	<scope>test</scope>
     </dependency>
   </dependencies>
   <reporting>

@@ -19,28 +19,32 @@
  */
 package com.bouygtel.sonar.redmine;
 
-import java.util.List;
-
-import org.sonar.api.SonarPlugin;
-
-import com.google.common.collect.ImmutableList;
+import org.sonar.api.security.Authenticator;
 
 /**
- * Sonar plugin to authenticate users from redmine rest api.
+ * Generic authenticator for all plugin implementing {@link UsersManager}
  * 
  * @author Raphael Jolly
  */
-public class RedminePlugin extends SonarPlugin {
+public class UserAuthenticator extends Authenticator {
+    private final UsersManager userManager;
+
+    /**
+     * Constructor
+     * 
+     * @param userManager
+     */
+    public UserAuthenticator(UsersManager userManager) {
+        this.userManager = userManager;
+    }
 
     /**
      * {@inheritDoc}
      * 
-     * @see org.sonar.api.Plugin#getExtensions()
-     * @deprecated
+     * @see org.sonar.api.security.Authenticator#doAuthenticate(org.sonar.api.security.Authenticator.Context)
      */
-    @Deprecated
-    public List<?> getExtensions() {
-        return ImmutableList.of(RedmineRealm.class);
+    @Override
+    public boolean doAuthenticate(Context context) {
+        return userManager.auth(context.getUsername(), context.getPassword());
     }
-
 }

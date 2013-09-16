@@ -17,10 +17,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-
 package com.bouygtel.sonar.redmine;
-
-import java.util.Map;
 
 import org.sonar.api.config.Settings;
 import org.sonar.api.security.Authenticator;
@@ -28,50 +25,79 @@ import org.sonar.api.security.ExternalGroupsProvider;
 import org.sonar.api.security.ExternalUsersProvider;
 import org.sonar.api.security.SecurityRealm;
 
-import com.taskadapter.redmineapi.bean.User;
-
 /**
  * @author Raphael Jolly
  */
 public class RedmineRealm extends SecurityRealm {
-	private final RedmineSettingsManager settingsManager;
-	private RedmineAuthenticator authenticator;
-	private ExternalUsersProvider usersProvider;
-	private ExternalGroupsProvider groupsProvider;
 
-	public RedmineRealm(Settings settings) {
-		settingsManager = new RedmineSettingsManager(settings);
-	}
+    /** Key for read redmine url from sonar configuration */
+    public final static String URL_KEY = "redmine.url";
+    /** Key for read redmine api key from sonar configuration */
+    public final static String API_KEY = "redmine.key";
 
-	/**
-	 * Initializes Redmine authenticator and users and groups providers.
-	 *
-	 */
-	@Override
-	public void init() {
-		final Map<String, User> users = settingsManager.getUsers();
-		authenticator = new RedmineAuthenticator(settingsManager); 
-		usersProvider = new RedmineUsersProvider(users);
-		groupsProvider = new RedmineGroupsProvider(users);
-	}
+    private final UsersManager userManager;
 
-	@Override
-	public Authenticator doGetAuthenticator() {
-		return authenticator;
-	}
+    private Authenticator authenticator;
+    private ExternalUsersProvider usersProvider;
+    private ExternalGroupsProvider groupsProvider;
 
-	@Override
-	public ExternalUsersProvider getUsersProvider() {
-		return usersProvider;
-	}
+    /**
+     * Constructeur
+     * 
+     * @param settings
+     */
+    public RedmineRealm(Settings settings) {
+        userManager = new RedmineUsersManager(settings.getString(URL_KEY), settings.getString(API_KEY));
+    }
 
-	@Override
-	public ExternalGroupsProvider getGroupsProvider() {
-		return groupsProvider;
-	}
+    /**
+     * Initializes Redmine authenticator and users and groups providers.
+     * 
+     */
+    @Override
+    public void init() {
+        authenticator = new UserAuthenticator(userManager);
+        usersProvider = new RedmineUsersProvider(userManager);
+        groupsProvider = new RedmineGroupsProvider(userManager);
+    }
 
-	@Override
-	public String getName() {
-		return "REDMINE";
-	}
+    /**
+     * {@inheritDoc}
+     * 
+     * @see org.sonar.api.security.SecurityRealm#doGetAuthenticator()
+     */
+    @Override
+    public Authenticator doGetAuthenticator() {
+        return authenticator;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see org.sonar.api.security.SecurityRealm#getUsersProvider()
+     */
+    @Override
+    public ExternalUsersProvider getUsersProvider() {
+        return usersProvider;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see org.sonar.api.security.SecurityRealm#getGroupsProvider()
+     */
+    @Override
+    public ExternalGroupsProvider getGroupsProvider() {
+        return groupsProvider;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see org.sonar.api.security.SecurityRealm#getName()
+     */
+    @Override
+    public String getName() {
+        return "REDMINE";
+    }
 }

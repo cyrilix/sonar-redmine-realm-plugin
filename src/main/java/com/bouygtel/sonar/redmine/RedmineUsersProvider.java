@@ -17,10 +17,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-
 package com.bouygtel.sonar.redmine;
-
-import java.util.Map;
 
 import org.sonar.api.security.ExternalUsersProvider;
 import org.sonar.api.security.UserDetails;
@@ -28,21 +25,35 @@ import org.sonar.api.security.UserDetails;
 import com.taskadapter.redmineapi.bean.User;
 
 /**
+ * {@link ExternalUsersProvider} based on redmine WS-REST api
+ * 
  * @author Raphael Jolly
  */
 public class RedmineUsersProvider extends ExternalUsersProvider {
-	private final Map<String, User> users;
 
-	public RedmineUsersProvider(Map<String, User> users) {
-		this.users = users;
-	}
+    private UsersManager usersManager;
 
-	@Override
-	public UserDetails doGetUserDetails(Context context) {
-		User user = users.get(context.getUsername());
-		UserDetails details = new UserDetails();
-		details.setName(user.getFullName());
-		details.setEmail(user.getMail());
-		return details;
-	}
+    /**
+     * Constructeur
+     * 
+     * @param usersManager
+     */
+    public RedmineUsersProvider(UsersManager usersManager) {
+        this.usersManager = usersManager;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see org.sonar.api.security.ExternalUsersProvider#doGetUserDetails(org.sonar.api.security.ExternalUsersProvider.Context)
+     */
+    @Override
+    public UserDetails doGetUserDetails(Context context) {
+        User user = usersManager.getUser(context.getUsername());
+        if (user == null) return null;
+        UserDetails details = new UserDetails();
+        details.setName(user.getFullName());
+        details.setEmail(user.getMail());
+        return details;
+    }
 }

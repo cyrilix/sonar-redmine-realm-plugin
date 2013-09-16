@@ -17,15 +17,20 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-
 package com.bouygtel.sonar.redmine;
 
-import static org.junit.Assert.*;
+import static org.easymock.EasyMock.createStrictControl;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.easymock.EasyMock;
+import org.easymock.IMocksControl;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.security.ExternalUsersProvider;
 import org.sonar.api.security.ExternalUsersProvider.Context;
 import org.sonar.api.security.UserDetails;
@@ -36,28 +41,69 @@ import com.taskadapter.redmineapi.bean.User;
  * @author Raphael Jolly
  */
 public class RedmineUsersProviderTest {
-	@Test
-	public void testDoGetUserDetailsContext() {
-		Map<String, User> users = new HashMap<String, User>();
-		User user = new User();
-		user.setFullName("To To");
-		user.setMail("to@to");
-		users.put("toto", user);
-		ExternalUsersProvider provider = new RedmineUsersProvider(users);
-		Context context = new Context("toto", null);
-		UserDetails details = provider.doGetUserDetails(context);
-		assertTrue("To To".equals(details.getName()));
-		assertTrue("to@to".equals(details.getEmail()));
-	}
+    private static final Logger LOGGER = LoggerFactory.getLogger(RedmineUsersProviderTest.class);
 
-	@Test
-	public void testNoUser() {
-		Map<String, User> users = new HashMap<String, User>();
-		ExternalUsersProvider provider = new RedmineUsersProvider(users);
-		Context context = new Context("toto", null);
-		try {
-			provider.doGetUserDetails(context);
-			fail();
-		} catch (NullPointerException e) {}
-	}
+    /**
+     * Constructor
+     */
+    public RedmineUsersProviderTest() {}
+
+    /**
+     * Test method {@link RedmineUsersProvider#doGetUserDetails(Context)}
+     */
+    @Test
+    public void testDoGetUserDetailsContext() {
+        LOGGER.info("------ testDoGetUserDetailsContext -------");
+        try {
+            IMocksControl control = createStrictControl();
+            UsersManager usersManager = control.createMock(UsersManager.class);
+
+            Map<String, User> users = new HashMap<String, User>();
+
+            User user = new User();
+            user.setFullName("To To");
+            user.setMail("to@to");
+            users.put("toto", user);
+
+            ExternalUsersProvider provider = new RedmineUsersProvider(usersManager);
+            Context context = new Context("toto", null);
+
+            control.reset();
+            EasyMock.expect(usersManager.getUser("toto")).andReturn(user);
+            control.replay();
+            UserDetails details = provider.doGetUserDetails(context);
+
+            assertTrue("To To".equals(details.getName()));
+            assertTrue("to@to".equals(details.getEmail()));
+
+            control.verify();
+        } catch (Exception e) {
+            LOGGER.error("Erreur imprévue: " + e.getMessage(), e);
+            fail("Erreur imprévue: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Test method {@link RedmineUsersProvider#doGetUserDetails(Context)}
+     */
+    @Test
+    public void testNoUser() {
+        try {
+            IMocksControl control = createStrictControl();
+            UsersManager usersManager = control.createMock(UsersManager.class);
+
+            ExternalUsersProvider provider = new RedmineUsersProvider(usersManager);
+            Context context = new Context("toto", null);
+
+            control.reset();
+            EasyMock.expect(usersManager.getUser("toto")).andReturn(null);
+            control.replay();
+
+            provider.doGetUserDetails(context);
+            control.verify();
+        } catch (Exception e) {
+            LOGGER.error("Erreur imprévue: " + e.getMessage(), e);
+            fail("Erreur imprévue: " + e.getMessage());
+        }
+    }
 }

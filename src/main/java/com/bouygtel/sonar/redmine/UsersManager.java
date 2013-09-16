@@ -17,23 +17,43 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-
 package com.bouygtel.sonar.redmine;
 
-import org.sonar.api.security.Authenticator;
+import java.util.Map;
+
+import com.taskadapter.redmineapi.bean.User;
 
 /**
- * @author Raphael Jolly
+ * Interface to manage users
+ * 
+ * @author Cyrille Nofficial
  */
-public class RedmineAuthenticator extends Authenticator {
-	private final RedmineSettingsManager settingsManager;
+public interface UsersManager {
 
-	public RedmineAuthenticator(RedmineSettingsManager settingsManager) {
-		this.settingsManager = settingsManager;
-	}
+    /**
+     * Get all the @link{User}s available in the target.
+     * 
+     * @return A @link{Map} with all the @link{User} objects. The key is the login of the user.
+     */
+    Map<String, User> getUsers();
 
-	@Override
-	public boolean doAuthenticate(Context context) {
-		return settingsManager.auth(context.getUsername(), context.getPassword());
-	}
+    /**
+     * Return user details from username
+     * 
+     * @param username user details
+     * 
+     * @return user details
+     */
+    User getUser(String username);
+
+    /**
+     * Authenticates a user.
+     * 
+     * @param username login of the user
+     * @param password password to authenticate
+     * 
+     * @return <code>true</code> if the user is recognized; <code>false</code> otherwise.
+     */
+    boolean auth(String username, String password);
+
 }

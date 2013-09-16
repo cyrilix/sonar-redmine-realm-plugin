@@ -17,18 +17,24 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-
 package com.bouygtel.sonar.redmine;
 
-import static org.junit.Assert.*;
+import static org.easymock.EasyMock.createStrictControl;
+import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.easymock.EasyMock;
+import org.easymock.IMocksControl;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.security.ExternalGroupsProvider;
 
 import com.taskadapter.redmineapi.bean.Group;
@@ -38,45 +44,86 @@ import com.taskadapter.redmineapi.bean.User;
  * @author Raphael Jolly
  */
 public class RedmineGroupsProviderTest {
-	@Test
-	public void testDoGetGroupsString() {
-		Map<String, User> users = new HashMap<String, User>();
-		List<Group> groups = new ArrayList<Group>();
-		Group group1 = new Group();
-		group1.setName("titi");
-		Group group2 = new Group();
-		group2.setName("tata");
-		groups.add(group1);
-		groups.add(group2);
-		User user = new User();
-		user.setGroups(groups);
-		users.put("toto", user);
-		ExternalGroupsProvider provider = new RedmineGroupsProvider(users);
-		Collection<String> result = provider.doGetGroups("toto");
-		assertTrue(result.size() == 2);
-		assertTrue(result.contains("titi"));
-		assertTrue(result.contains("tata"));
-	}
+    private static Logger LOGGER = LoggerFactory.getLogger(RedmineGroupsProviderTest.class);
 
-	@Test
-	public void testNoGroup() {
-		Map<String, User> users = new HashMap<String, User>();
-		List<Group> groups = new ArrayList<Group>();
-		User user = new User();
-		user.setGroups(groups);
-		users.put("toto", user);
-		ExternalGroupsProvider provider = new RedmineGroupsProvider(users);
-		Collection<String> result = provider.doGetGroups("toto");
-		assertTrue(result.size() == 0);
-	}
+    /**
+     * Test method {@link RedmineGroupsProvider#doGetGroups(String)}
+     */
+    @Test
+    public void testDoGetGroupsString() {
 
-	@Test
-	public void testNoUser() {
-		Map<String, User> users = new HashMap<String, User>();
-		ExternalGroupsProvider provider = new RedmineGroupsProvider(users);
-		try {
-			provider.doGetGroups("toto");
-			fail();
-		} catch (NullPointerException e) {}
-	}
+        try {
+            IMocksControl control = createStrictControl();
+            UsersManager usersManager = control.createMock(UsersManager.class);
+            ExternalGroupsProvider provider = new RedmineGroupsProvider(usersManager);
+
+            List<Group> groups = new ArrayList<Group>();
+
+            Group group1 = new Group();
+            group1.setName("titi");
+            Group group2 = new Group();
+            group2.setName("tata");
+            groups.add(group1);
+            groups.add(group2);
+            User user = new User();
+            user.setGroups(groups);
+
+            control.reset();
+            EasyMock.expect(usersManager.getUser("toto")).andReturn(user);
+            control.replay();
+
+            Collection<String> result = provider.doGetGroups("toto");
+            assertEquals(result.size(), 2);
+            assertTrue(result.contains("titi"));
+            assertTrue(result.contains("tata"));
+
+            control.verify();
+
+        } catch (Exception e) {
+            LOGGER.error("Erreur imprévue: " + e.getMessage(), e);
+            fail("Erreur imprévue: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Test method {@link RedmineGroupsProvider#doGetGroups(String)} without group found
+     */
+    @Test
+    public void testNoGroup() {
+        IMocksControl control = createStrictControl();
+        UsersManager usersManager = control.createMock(UsersManager.class);
+        ExternalGroupsProvider provider = new RedmineGroupsProvider(usersManager);
+
+        User user = new User();
+
+        control.reset();
+        EasyMock.expect(usersManager.getUser("toto")).andReturn(user);
+        control.replay();
+
+        Collection<String> result = provider.doGetGroups("toto");
+        assertTrue(result.isEmpty());
+
+        control.verify();
+    }
+
+    /**
+     * Test method {@link RedmineGroupsProvider#doGetGroups(String)} without user found
+     */
+    @Test
+    public void testNoUser() {
+
+        IMocksControl control = createStrictControl();
+        UsersManager usersManager = control.createMock(UsersManager.class);
+        RedmineGroupsProvider provider = new RedmineGroupsProvider(usersManager);
+
+        // Return null if none user is found
+        control.reset();
+        EasyMock.expect(usersManager.getUser("toto")).andReturn(null);
+        control.replay();
+
+        assertThat(provider.doGetGroups("toto"), nullValue(Collection.class));
+        assertThat(provider.doGetGroups(null), nullValue(Collection.class));
+        control.verify();
+
+    }
 }
