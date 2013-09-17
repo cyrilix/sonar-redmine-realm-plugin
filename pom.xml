@@ -9,7 +9,7 @@
 
 	<groupId>com.bouygtel</groupId>
 	<artifactId>sonar-redmine-plugin</artifactId>
-	<version>1.0</version>
+	<version>1.1-SNAPSHOT</version>
 	<packaging>sonar-plugin</packaging>
 	<name>Sonar Redmine Plugin</name>
 	<description>Delegates authentication to Redmine</description>
@@ -32,7 +32,7 @@
 		<connection>scm:git:git://maven-bss.dev.dolmen.bouyguestelecom.fr/sonar-redmine-realm-plugin.git</connection>
 		<developerConnection>scm:git:ssh://maven-bss.dev.dolmen.bouyguestelecom.fr:29418/sonar-redmine-realm-plugin.git</developerConnection>
 		<url>http://maven-bss.dev.dolmen.bouyguestelecom.fr/gerrit/gitweb?p=sonar-redmine-realm-plugin.git</url>
-	  <tag>sonar-redmine-plugin-1.0</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<issueManagement>
