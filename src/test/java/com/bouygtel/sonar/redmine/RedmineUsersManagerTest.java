@@ -81,16 +81,16 @@ public class RedmineUsersManagerTest {
             }
 
             /**
-             * @param url
-             * @param username
-             * @param password
+             * @param urlRedmine redmine url
+             * @param usernameRedmine redmine username
+             * @param passwordRedmine redmine password
              * @return
              */
             @Override
-            RedmineManager getRedmineManagerForAuth(String url, String username, String password) {
-                this.url = url;
-                this.username = username;
-                this.password = password;
+            RedmineManager getRedmineManagerForAuth(String urlRedmine, String usernameRedmine, String passwordRedmine) {
+                this.url = urlRedmine;
+                this.username = usernameRedmine;
+                this.password = passwordRedmine;
                 return redmineManager;
             }
         }

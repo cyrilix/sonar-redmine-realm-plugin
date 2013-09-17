@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -32,8 +33,8 @@
 		<connection>scm:git:git://maven-bss.dev.dolmen.bouyguestelecom.fr/sonar-redmine-realm-plugin.git</connection>
 		<developerConnection>scm:git:ssh://maven-bss.dev.dolmen.bouyguestelecom.fr:29418/sonar-redmine-realm-plugin.git</developerConnection>
 		<url>http://maven-bss.dev.dolmen.bouyguestelecom.fr/gerrit/gitweb?p=sonar-redmine-realm-plugin.git</url>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 
 	<issueManagement>
 		<system>Redmine</system>
@@ -85,10 +86,32 @@
 		<sonar.version>3.1</sonar.version>
 		<sonar.pluginName>Redmine</sonar.pluginName>
 		<sonar.pluginClass>com.bouygtel.sonar.redmine.RedminePlugin</sonar.pluginClass>
+
+		<java.version>1.6</java.version>
+		<encoding>UTF-8</encoding>
+		<project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
+		<maven.compiler.encoding>${encoding}</maven.compiler.encoding>
 	</properties>
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<encoding>${encoding}</encoding>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<configuration>
+					<encoding>${encoding}</encoding>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>

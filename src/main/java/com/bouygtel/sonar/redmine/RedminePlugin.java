@@ -33,12 +33,18 @@ import com.google.common.collect.ImmutableList;
 public class RedminePlugin extends SonarPlugin {
 
     /**
+     * Constructor
+     */
+    public RedminePlugin() {}
+
+    /**
      * {@inheritDoc}
      * 
      * @see org.sonar.api.Plugin#getExtensions()
-     * @deprecated
+     * @deprecated Mark as deprecated because Plugin is deprecated
      */
     @Deprecated
+    @Override
     public List<?> getExtensions() {
         return ImmutableList.of(RedmineRealm.class);
     }

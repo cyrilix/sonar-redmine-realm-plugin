@@ -34,7 +34,7 @@ import com.taskadapter.redmineapi.bean.User;
  * The RedmineUsersManager will parse the settings. This class is also responsible for authentication.
  */
 public class RedmineUsersManager implements UsersManager {
-    private static Logger LOGGER = LoggerFactory.getLogger(RedmineUsersManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RedmineUsersManager.class);
     private final String url;
     private final RedmineManager manager;
 
@@ -65,6 +65,7 @@ public class RedmineUsersManager implements UsersManager {
      * 
      * @see com.bouygtel.sonar.redmine.UsersManager#getUsers()
      */
+    @Override
     public Map<String, User> getUsers() {
         Map<String, User> result = new HashMap<String, User>();
         try {
@@ -82,6 +83,7 @@ public class RedmineUsersManager implements UsersManager {
      * 
      * @see com.bouygtel.sonar.redmine.UsersManager#getUser(java.lang.String)
      */
+    @Override
     public User getUser(String username) {
         try {
             return manager.getUserByLogin(username);
@@ -98,6 +100,7 @@ public class RedmineUsersManager implements UsersManager {
      * 
      * @see com.bouygtel.sonar.redmine.UsersManager#auth(java.lang.String, java.lang.String)
      */
+    @Override
     public boolean auth(String username, String password) {
         try {
             getRedmineManagerForAuth(url, username, password).getCurrentUser();
