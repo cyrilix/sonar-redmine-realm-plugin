@@ -1,5 +1,5 @@
 /*
- * Sonar Redmine Plugin
+ * Sonar Redmine Authentification Plugin
  * Copyright (C) 2013 Bouygues Telecom
  * dev@sonar.codehaus.org
  *

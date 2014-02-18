@@ -9,10 +9,10 @@
 	</parent>
 
 	<groupId>com.bouygtel</groupId>
-	<artifactId>sonar-redmine-plugin</artifactId>
-	<version>1.1-SNAPSHOT</version>
+	<artifactId>sonar-redmine-auth-plugin</artifactId>
+	<version>1.0-SNAPSHOT</version>
 	<packaging>sonar-plugin</packaging>
-	<name>Sonar Redmine Plugin</name>
+	<name>Sonar Redmine Authentification Plugin</name>
 	<description>Delegates authentication to Redmine</description>
 
 	<inceptionYear>2013</inceptionYear>
